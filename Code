@@ -1,0 +1,23 @@
+import requests
+from bs4 import BeautifulSoup
+import json
+url="https://time.com/"
+reqs = requests.get(url)
+htmlCont = reqs.content
+soup = BeautifulSoup(htmlCont, 'html.parser')
+article=[] 
+tit=[]          #define the empty list of title 
+li=[]           #define the empty list of link
+h3=soup.find_all("h3", class_="featured-voices__list-item-headline")
+list_of_item=soup.find_all("li", {'class': 'featured-voices__list-item'})
+for i in h3:
+    tit.append(i.string)   #to get the string 
+for i in list_of_item:
+    li.append(url+str(i.findChildren("a", recursive=False)[0].get('href')))
+for i in range(len(tit)):
+    article.append({
+        "title" : tit[i],
+        "link" : li[i]
+    })
+jsonStr = json.dumps(article)
+print(jsonStr)
